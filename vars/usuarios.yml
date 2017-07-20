@@ -1,0 +1,4 @@
+---
+usuarios:
+  - { nombre: "usuario01", comentario: "Usuario 01", grupos: "sudo,adm", shell: "/bin/bash", clave: "shadow password", llave: "usuario01.pub" }
+  - { nombre: "usuario02", comentario: "Usuario 02", grupos: "sudo,adm", shell: "/bin/bash", clave: "shadow password", llave: "usuario02.pub" }

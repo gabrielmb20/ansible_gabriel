@@ -1,0 +1,26 @@
+---
+- name: Creacion de usuarios
+  hosts: equipos
+  vars_files:
+    - vars/usuarios.yml
+  tasks:
+    - name: Creando usuarios
+      become: yes
+      user:
+        name: "{{ item.nombre }}"
+        comment: "{{ item.comentario }}"
+        groups: "{{ item.grupos }}"
+        append: yes
+        shell: "{{ item.shell }}"
+        password: "{{ item.clave }}"
+      with_items: 
+        "{{usuarios}}"
+
+    - name: Copiando llaves de SSH
+      become: yes
+      authorized_key:
+        user: "{{ item.nombre }}"
+        state: present
+        key: "{{ lookup('file', 'ssh_keys/{{ item.llave }}') }}"
+      with_items: 
+        "{{usuarios}}"
