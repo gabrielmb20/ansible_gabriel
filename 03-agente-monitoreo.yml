@@ -1,0 +1,82 @@
+---
+  - name: Instalación de agente de monitoreo Check-MK
+    hosts: todos
+    become: yes
+    tasks:
+      - name: Instalación en servidores basados en Debian
+        block:
+          - name: Instala paquetes necesarios
+            apt: 
+              name: "{{ item }}"
+              state: latest
+            with_items:
+              - snmpd
+              - xinetd
+
+          - name: Instala agente de monitoreo
+            apt:  
+              deb: "http://10.178.105.72/monitoreo/check_mk/agents/check-mk-agent_1.4.0p23-1_all.deb"
+            register: deb_install
+        
+          - name: Estado de la instalación del agente
+            debug:
+              var: deb_install
+
+        when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+
+# -----------------------------------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------------------------------------
+      - name: Instalación en servidores basados en Red Hat
+        block:
+          - name: Instala paquetes necesarios
+            yum: 
+              name: "{{ item }}"
+              state: latest
+            with_items:
+              - net-snmp
+              - xinetd
+
+          - name: Instala agente de monitoreo
+            yum:  
+              name: "http://10.178.105.72/monitoreo/check_mk/agents/check-mk-agent-1.4.0p23-1.noarch.rpm"
+              state: present
+            register: rhel_install
+        
+          - name: Estado de la instalación del agente
+            debug:
+              var: rhel_install
+
+          - name: Habilita el servicio SNMP a nivel de firewalld
+            firewalld:
+              service: snmp
+              permanent: true
+              state: enabled
+              immediate: true
+
+          - name: Habilita el servicio XINETD a nivel de firewalld
+            firewalld:
+              port: 6556/tcp
+              permanent: true
+              state: enabled
+              immediate: true
+
+        when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+
+
+# -----------------------------------------------------------------------------------------------------------
+# -----------------------------------------------------------------------------------------------------------
+      - name: Copia archivo de configuración de SNMP
+        copy:
+          src: files/snmpd.conf
+          dest: /etc/snmp/snmpd.conf
+
+
+      - name: Reinicia servicios necesarios
+        service:
+          name: "{{ item }}"
+          enabled: true
+          state: restarted
+        with_items:
+          - xinetd
+          - snmpd
+

@@ -1,0 +1,23 @@
+---
+- name: Instala Ansible en el servidor de administración (Control Machine)
+  hosts: todos
+  become: yes
+  tasks:
+  - block:
+      - name: Agrega el repositorio de Ansible
+        apt_repository:
+          repo: 'ppa:ansible/ansible'
+        
+      - name: Actualiza caché de APT
+        apt:
+          update_cache: yes
+        
+      - name: Instala Ansible y la dependencia de python
+        apt:
+          name: "{{ item }}"
+          state: present
+        with_items:
+          - python
+          - ansible
+
+    when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'

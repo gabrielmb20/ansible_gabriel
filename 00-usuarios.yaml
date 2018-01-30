@@ -1,23 +1,35 @@
 ---
 - name: Creacion de usuarios
-  hosts: equipos
+  hosts: todos
   vars_files:
     - vars/usuarios.yml
+  become: yes
   tasks:
-    - name: Creando usuarios
-      become: yes
+    - name: Creando usuarios para servidores basados en Debian
       user:
         name: "{{ item.nombre }}"
         comment: "{{ item.comentario }}"
-        groups: "{{ item.grupos }}"
+        groups: "{{ item.gruposDebian }}"
         append: yes
         shell: "{{ item.shell }}"
         password: "{{ item.clave }}"
       with_items: 
         "{{usuarios}}"
+      when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+    
+    - name: Creando usuarios para servidores basados en Red Hat
+      user:
+        name: "{{ item.nombre }}"
+        comment: "{{ item.comentario }}"
+        groups: "{{ item.gruposRedHat }}"
+        append: yes
+        shell: "{{ item.shell }}"
+        password: "{{ item.clave }}"
+      with_items: 
+        "{{usuarios}}"
+      when: ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
 
     - name: Copiando llaves de SSH
-      become: yes
       authorized_key:
         user: "{{ item.nombre }}"
         state: present

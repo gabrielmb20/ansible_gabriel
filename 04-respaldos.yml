@@ -1,0 +1,12 @@
+---
+- name: Crear llave SSH para el usuario root en todas las máquinas, y la distribuye al servidor de respaldos
+  hosts: todos
+  become: yes
+  tasks:
+    - name: Crea llave de SSH para el usuario root
+      user:
+        name: root
+        generate_ssh_key: yes
+        ssh_key_bits: 2048
+        ssh_key_file: .ssh/id_rsa
+

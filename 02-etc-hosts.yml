@@ -1,0 +1,9 @@
+---
+- name: "Generando archivo /etc/hosts"
+  hosts: todos
+  become: yes
+  tasks:
+    - name: "Copiando archivo hosts"
+      copy:
+        src: files/hosts
+        dest: /etc/hosts

@@ -1,0 +1,25 @@
+---
+- name: Actualizacion de paquetes del Sistema Operativo
+  hosts: todos
+  strategy: free
+  tasks:
+    - name: Instala aptitude (requerido por ansible)
+      apt:
+        name: aptitude
+        state: latest
+        update_cache: yes
+      become: yes
+    - name: Actualiza cache
+      apt:
+        update_cache: yes
+      become: yes
+    - name: Actualiza paquetes
+      apt:
+        upgrade: dist
+      become: yes
+      ignore_errors: true
+    - name: Limpia y elimina paquetes innecesarios
+#      apt:
+#      autoremove: yes
+      shell: apt-get -y autoremove --purge        
+      become: yes

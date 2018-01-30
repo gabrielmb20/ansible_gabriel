@@ -1,0 +1,15 @@
+---
+- name: Instala de paquetes de software del Sistema Operativo
+  hosts: todos
+  strategy: free
+  tasks:
+    - include_vars: vars/paquetes.yml
+    - name: Instalación de paquetes de software base
+      apt:
+        name: "{{ item }}"
+        state: latest
+        update_cache: yes
+      ignore_errors: true
+      with_flattened:
+        - "{{ base_todos }}"
+      become: yes

@@ -1,0 +1,25 @@
+---
+- name: Instala servidor de bases de datos MariaDB y lo integra al cluster de Gallera
+  hosts: todos
+  become: yes
+  tasks:
+    - name: Agregar llave de repositorio de MariaDB
+      apt_key:
+        keyserver: keyserver.ubuntu.com
+        id: 0xF1656F24C74CD1D8
+
+    - name: Agrega el repositorio
+      apt_repository:
+        repo: deb http://mariadb.mirror.iweb.com/repo/10.2/ubuntu xenial main
+        state: present
+
+    - name: Actualiza caché de APT
+      apt:
+        update_cache: yes
+
+    - name: Instala el paquete mariadb-server-10.2
+      apt:
+        name: mariadb-server-10.2
+        state: present
+
+
