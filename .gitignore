@@ -1,5 +1,0 @@
-.gitignore
-*.swp
-vars/usuarios.yml
-ssh_keys/*
-*.retry
