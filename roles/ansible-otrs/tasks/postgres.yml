@@ -9,7 +9,7 @@
 #   become: true
 
 # - name: 'Create otrs user in postgres database'
-#   postgresql_user: user=otrs password={{ otrs_db_password }}
+#   postgresql_user: user=otrs password={{ mysql_root_password }}
 #   become: true
 #   become_user: postgres
 

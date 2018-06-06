@@ -8,14 +8,48 @@
   apt: "name=python-mysqldb state=installed"
   become: true
 
-- name: 'Create otrs database (mysql)'
-  mysql_db: name=otrs state=present
+- name: 'Configure mysql parameters for OTRS'
+  copy:
+    src: files/mysqld.cnf
+    dest: /etc/mysql/mysql.conf.d/mysqld.cnf
+    mode: 0644
+    owner: root
+    group: root  
   become: true
 
-- name: 'Create otrs user in mysql and Grant all privilages to otrs DB for otrs user'
-  mysql_user: >
-    name=otrs
-    password={{ otrs_db_password }}
-    priv=otrs.*:ALL
-    state=present
+- name: 'Restart mysql service'
+  service:
+    name: mysql
+    state: restarted
   become: true
+
+- name: install .my.cnf with credentials
+  template: 
+    src: my.cnf.j2 
+    dest: "/root/.my.cnf"
+    mode: 0400
+  become: true
+
+- name: root password is present
+  mysql_user: 
+    name: root 
+    host: "{{item}}"
+    password: "{{mysql_root_password}}"
+    state: present
+  with_items:
+    - '::1'
+    - '127.0.0.1'
+    - 'localhost'
+  become: true
+
+#- name: 'Create otrs user in mysql and Grant all privilages to otrs DB for otrs user'
+#  mysql_user: >
+#    name=root
+#    password={{ mysql_root_password }}
+#    priv=*.*:ALL
+#    state=present
+#  become: true
+
+#- name: 'Create otrs database (mysql)'
+#  mysql_db: name=otrs state=present
+#  become: true

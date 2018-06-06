@@ -1,4 +1,4 @@
 ---
 otrs_version: 6.0.7
 otrs_db: mysql
-otrs_db_password: greencore
+mysql_root_password: greencore

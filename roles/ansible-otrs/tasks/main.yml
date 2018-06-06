@@ -1,5 +1,5 @@
 ---
-#- include: update_system.yml
+- include: update_system.yml
 
 - include: otrs_package.yml
 

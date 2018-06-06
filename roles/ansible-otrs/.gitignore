@@ -1,0 +1,11 @@
+# log files
+*.log
+
+# vagrant folder
+.vagrant/
+
+# hosts
+hosts
+
+# retry files
+*.retry
