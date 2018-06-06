@@ -1,0 +1,16 @@
+---
+#- include: update_system.yml
+
+- include: otrs_package.yml
+
+- include: perl_dependencies.yml
+
+- include: apache.yml
+
+- include: otrs_config.yml
+
+- include: postgres.yml
+  when: otrs_db == "postgres"
+
+- include: mysql.yml
+  when: otrs_db == "mysql"
